@@ -1,0 +1,306 @@
+/* reset-ish: make sizing predictable.
+   also… I set a global text color (#f40) here — reminder: this
+   will make *everything* red unless I override it later. */
+*, *:after, *:before {
+	box-sizing: border-box;
+   color:#f40
+}
+
+
+/* design tokens + global cursor.
+   font-size: 10px so 1rem = 10px. */
+
+:root {
+   --app-cursor: url('./hand.png') 16 16, auto;
+   
+   --bg: #000;            /* page background (dark mode base) */
+   --panel: #fff;         /* light panels/cards */
+   --text: #eee;          /* default text on dark */
+   --text-dark: #111;     /* text on light panels */
+   --accent: #ff8000;     /* neon-ish orange for glows */
+   --neon-text-color: var(--accent);
+   --neon-border-color: #08f;        /* cyan blue glow */
+   --neon-border-core:   #7fd0ff;    /* softer inner glow */
+   font-size: 10px;       /* 1rem == 10px (my preference) */
+}
+
+/* mobile tweaks: on narrow screens stack grid items and keep images tidy */
+@media (max-width: 767px) {
+   #grid-container {
+       flex-direction: column; /* stack instead of row */
+   }
+   img {
+       max-width: 100%;
+       height:auto;            /* no distortion */
+   }
+ }
+
+/* force the custom cursor everywhere (buttons, inputs, etc.) */
+html, body,
+a, button, label,
+input, textarea, select,
+[role="button"], [contenteditable="true"] {
+  cursor: var(--app-cursor) !important;
+}
+
+/* outer shell: spacing scales with viewport using clamp().
+   border stays, and I animate a neon border flicker below. */
+body {
+   margin: clamp(12px, 6vw, 60px);
+   padding: clamp(8px, 2.5vw, 16px);
+  
+   font-family: "baudot", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+
+
+   color: var(--text);
+   background: var(--bg);
+   border: 2px solid #f6f6f6;
+  
+
+   animation: flicker-border 1s linear alternate infinite;   /* subtle neon pulse */
+  
+}
+
+/* border glow keyframes (only box-shadow, not text) */
+@keyframes flicker-border {
+   0%, 10% {
+     box-shadow:
+       0 0 .5rem #fff,
+       inset 0 0 .5rem #fff,
+       0 0 2rem var(--neon-border-color),
+       inset 0 0 2rem var(--neon-border-color),
+       0 0 4rem var(--neon-border-color),
+       inset 0 0 4rem var(--neon-border-color);
+   }
+
+ }
+ /* header row: coin — title — coin (grid makes centering painless) */
+ .box{
+   display: grid;
+   grid-template-columns: auto 1fr auto; 
+   align-items: center;
+   gap: 12px;
+ }
+ 
+/* coins shouldn't stretch weirdly */
+ .box img{
+   object-fit: contain;
+ }
+
+ /* hide the coins on small screens (keep layout clean on phones) */
+ @media (max-width: 600px){
+   .box img { display: none !important; }
+ }
+ 
+/* make sure the title truly centers between coins */
+
+ .box #title{
+   margin: 0;           
+   width: auto;         
+   text-align: center;  
+   justify-self: center; 
+   white-space: nowrap;  /* avoid wrapping the headline */
+   min-width: 0;        
+ }
+ 
+
+
+
+/* big neon headline */
+ #title {
+   text-align: center;  
+   margin: 0 auto;
+   display:block; 
+   padding: 20px; 
+   text-transform: uppercase;
+   animation: flicker 1s linear infinite alternate;    /* text glow */  
+   color: #fff;
+	font-size: calc(1em + 5vw);  /* scales with viewport */
+	font-weight: 900;
+ }
+
+ /* text neon flicker (for title) */
+ @keyframes flicker {
+    
+   0%, 20% {     
+       text-shadow:
+           -0.2rem -0.2rem 1rem #fff,
+           0.2rem 0.2rem 1rem #fff,
+           0 0 2rem var(--neon-text-color),
+           0 0 4rem var(--neon-text-color),
+           0 0 6rem var(--neon-text-color),
+           0 0 8rem var(--neon-text-color),
+           0 0 10rem var(--neon-text-color);
+          
+   }
+   /* rest of the cycle is quieter so it flickers, not just glows */
+}
+
+/* utility: add a neon border + inner glow to whatever */ 
+.neon{
+   border: 2px solid var(--neon-border-color);
+   box-shadow:
+     0 0 .5rem var(--neon-border-core),
+     inset 0 0 .5rem var(--neon-border-core),
+     0 0 1rem var(--neon-border-color),
+     inset 0 0 1rem var(--neon-border-color),
+     0 0 2rem var(--neon-border-color),
+     inset 0 0 2rem var(--neon-border-color);
+   border-radius: inherit; /* follow parent rounding */
+}
+
+/* results container: flexible row that wraps, with even spacing */
+#grid-container{
+   
+   display: flex;
+   flex-wrap: wrap;
+   justify-content: space-evenly; /* equal space between + at edges */             
+   row-gap: 1.2rem;               /* vertical spacing */             
+ 
+ 
+   padding-inline: clamp(1rem, 4vw, 3rem);
+   padding-block: clamp(12px, 2vw, 24px);
+ 
+   width: 100%;
+   background: transparent;                   
+   color: var(--text-dark);  /* dark text on light cards */
+   border: 2px solid #ffffff; /* outline the group */
+   /* no big border radius here on purpose so it fits edge-to-edge vibe */
+ 
+ }
+ 
+
+ #grid-container .grid-item{
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   text-align: center;
+   gap: .5rem;
+ 
+ 
+   flex: 1 1 180px;  /* responsive basis */                           
+   max-width: 260px; /* don’t get too wide */                          
+   min-height: 120px; /* keeps height steady when numbers pop in */                         
+   margin: 0;                                  
+ }
+ 
+
+ #grid-container .grid-item h2 {
+   font-size: clamp(1.8rem, 1.2rem + 0.8vw, 2.6rem);
+   margin: 0;
+   line-height: 1.15;
+ }
+ 
+
+ #grid-container .grid-item p {
+   
+   font-size: clamp(2.6rem, 1.6rem + 2.4vw, 5rem);  
+   font-weight: 800;
+   line-height: 1.1;
+   margin: 0;
+ 
+  
+   min-height: 3rem;          
+   min-width: 5ch;            
+   display: inline-block;
+   white-space: nowrap;
+ 
+  
+   font-variant-numeric: tabular-nums;
+   font-feature-settings: "tnum" 1;
+ }
+
+
+.odometer .odometer-value,
+.odometer .odometer-digit { color: #08f; }
+/* inputs + button share the same hero type sizing */
+#amount-due,
+#amount-received,
+#calculate-change {
+
+   font-family: inherit;
+   text-align: center;
+   margin: 0 auto;
+   display: block;
+   width: 100%;
+
+   font-size: calc(1em + 3vw) ;  
+	font-weight: 900;
+ 
+}
+
+/* styling for the button text AND (global) ::placeholder.
+   note to self: if I want placeholder only on my inputs,
+   I should target #amount-due::placeholder, #amount-received::placeholder.
+   Leaving as-is for now. */
+#calculate-change, ::placeholder {
+
+
+   color: color-mix(in srgb, white 10%, rgb(190, 188, 188));
+	
+	font-weight: 900;
+	text-shadow: 
+   -0.0075em 0.0075em 0 color-mix(in srgb, rgb(255, 242, 2) 95%, rgb(0, 0, 0)),
+   0.005em  0.005em 0 color-mix(in srgb, rgb(255, 242, 2) 85%, black),
+   0.01em   0.01em  0 color-mix(in srgb, rgb(255, 242, 2) 80%, black),
+   0.015em  0.015em 0 color-mix(in srgb, rgb(255, 242, 2) 75%, black),
+   0.02em   0.02em  0 color-mix(in srgb, rgb(255, 242, 2) 70%, black),
+   0.025em  0.025em 0 color-mix(in srgb, rgb(255, 242, 2) 65%, black),
+   0.03em   0.03em  0 color-mix(in srgb, rgb(255, 242, 2) 60%, black),
+   0.035em  0.035em 0 color-mix(in srgb, rgb(255, 242, 2) 55%, black);
+  
+}
+/* little pulse on hover for the inputs/button*/
+ #amount-due:hover {
+   animation: pulse 1s linear infinite;
+   cursor: pointer;
+   color: aqua; /* placeholder/text tint shifts */
+ }
+
+#amount-received:hover {
+   animation: pulse 1s linear infinite;
+   cursor: pointer;
+   color: aqua;
+ }
+ 
+#calculate-change:hover {
+   animation: pulse 1s linear infinite;
+   cursor: pointer;
+   color: aqua;
+ }
+
+ 
+  
+/* micro scale animation (kept tiny so layout doesn’t jump) */
+ @keyframes pulse {
+   0% {
+     transform: scale(1); /* Original size */
+   }
+   50% {
+     transform: scale(1.01); /* Slightly larger */
+   }
+   100% {
+     transform: scale(1); /* Return to original size */
+   }
+ }
+
+ .grid.array-container::before {
+   pointer-events: none;
+   opacity: 1;
+   top: calc(1rem);
+   right: calc(1rem - 1px);
+   bottom: calc(1rem - 1px);
+   left: calc(10rem);
+   border: 1px dotted currentColor;
+   box-shadow: none;
+ }
+ 
+ 
+
+   
+
+
+
+
+
+

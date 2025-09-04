@@ -1,4 +1,6 @@
 .DS_Store
 node_modules
 test-results
-solutions/
+solutions/.DS_Store
+node_modules/
+.dist/
