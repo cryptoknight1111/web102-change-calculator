@@ -5,14 +5,13 @@ function change(){
     const quarters = 25, dimes = 10, nickels = 5;
    
     let diff = received - due;
-    let posNum = Math.abs(diff);
     
-    let interger = Math.trunc(posNum);
-    let decimal = Math.round((posNum - interger) * 100);
+    let interger = Math.trunc(diff);
+    let cents = Math.round((diff - interger) * 100);
     
     let aDollars = interger;    
-    let aQuarters = Math.floor(decimal / quarters);
-    let qRemainder = decimal % quarters;
+    let aQuarters = Math.floor(cents / quarters);
+    let qRemainder = cents % quarters;
    
     let aDimes = Math.floor(qRemainder/ dimes);
     let dRemainder = qRemainder % dimes;
@@ -31,15 +30,35 @@ function change(){
 
 }
 
+
+
+const createOdometer = (el, value) => {
+    const odometer = new Odometer({
+        el: el,
+        value: value,
+    })
+}
+const dollarsOdometer = document.getElementById('dollars-output');
+const quartersOdometer = document.getElementById('quarters-output');
+const dimesOdometer = document.getElementById('dimes-output');
+const nickelsOdometer = document.getElementById('nickels-output');
+const penniesOdometer = document.getElementById('pennies-output');
+
+createOdometer(dollarsOdometer, );
+createOdometer(quartersOdometer, 0);
+createOdometer(dimesOdometer, 0);
+createOdometer(nickelsOdometer, 0);
+createOdometer(penniesOdometer, 0);
+
 const button = document.getElementById('calculate-change');
 
 button.addEventListener('click', function() {
     const result = change();
-    document.getElementById('dollars-output').textContent = result.dollars
-    document.getElementById('quarters-output').textContent = result.quarters
-    document.getElementById('dimes-output').textContent = result.dimes
-    document.getElementById('nickels-output').textContent = result.nickels
-    document.getElementById('pennies-output').textContent = result.pennies
+    document.getElementById('dollars-output').innerHTML  = result.dollars;
+    document.getElementById('quarters-output').innerHTML = result.quarters;
+    document.getElementById('dimes-output').innerHTML    = result.dimes;
+    document.getElementById('nickels-output').innerHTML  = result.nickels;
+    document.getElementById('pennies-output').innerHTML  = result.pennies;
 
 })
 
